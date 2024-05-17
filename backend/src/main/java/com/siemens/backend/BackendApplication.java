@@ -35,6 +35,7 @@ public class BackendApplication {
         return args -> {
             User user = new User("email", "password");
             userRepository.save(user);
+            userRepository.save(new User("email2", "password2"));
             ObjectMapper mapper = new ObjectMapper();
             TypeReference<List<Hotel>> typeReference = new TypeReference<List<Hotel>>() {};
             try (InputStream inputStream = TypeReference.class.getResourceAsStream("/data/hotels.json")) {

@@ -7,9 +7,10 @@ import {
     GetReservationsForHotelAndUser,
     MakeReservation, PostFeedbackForHotel
 } from "../commons/ApiUtils";
+import {NavLink} from "react-router-dom";
 
 export const HomePage = () => {
-    const {auth} = useContext(AuthContext);
+    const {auth, logout} = useContext(AuthContext);
     const [userPosition, setUserPosition] = useState(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
@@ -238,9 +239,9 @@ export const HomePage = () => {
 
     return (
         <div className="container">
-            <Card className="container w-50">
+            <Card className="container w-50 mt-5">
                 <CardBody>
-                    <div className="mb-3"> Enter radius </div>
+                    <div className="mb-3"> <b>Enter radius</b> </div>
                     <Form >
                         <Row className="formRow">
                             <Col className="col-md-9">
@@ -257,7 +258,9 @@ export const HomePage = () => {
                 <CardBody>
                     <Row>
                         <Col className="col-md-4">
-                            Hotels
+                            <div>
+                                <b>Hotels</b>
+                            </div>
                             <ul className="list-group">
                                 {hotels && hotels.map((hotel) => (
                                     <button key={hotel.id} id={hotel.id} type="button" className="list-group-item list-group-item-action" onClick={getRoomsReservationsAndFeedbackForHotel}>{hotel.name}</button>
@@ -265,7 +268,9 @@ export const HomePage = () => {
                             </ul>
                         </Col>
                         <Col className="col-md-4">
-                            Rooms
+                            <div>
+                                <b>Rooms</b>
+                            </div>
                             <ul className="list-group">
                                 {rooms && rooms.map((room) => (
                                     <button key={room.id} id={room.id} type="button" className="list-group-item list-group-item-action" onClick={(e) => setSelectedRoom(parseInt(e.target.id))}>
@@ -276,12 +281,12 @@ export const HomePage = () => {
                         </Col>
                         <Col className="col-md-4">
                             <Form>
-                                <label className="m-2">Start date:</label>
+                                <label className="m-2"> <b>Start date:</b> </label>
                                 <input type="date" id="start" onChange={(e) => {
                                     setReservationStartDate(e.target.value);
                                 }}/>
                                 <br/>
-                                <label className="m-2">End date:</label>
+                                <label className="m-2"> <b>End date:</b> </label>
                                 <input type="date" id="end" onChange={(e) => {
                                     setReservationEndDate(e.target.value);
                                 }}/>
@@ -295,21 +300,27 @@ export const HomePage = () => {
                 <CardBody>
                     <Row>
                         <Col className="col-md-4">
-                            Feedback from users about this hotel
+                            <div>
+                                <b>Feedback from users about this hotel</b>
+                            </div>
                             <ul className="list-group">
                                 {feedback && feedback.map((val) => (
                                     <li className="list-group-item"> {val} </li>
                                 ))}
                             </ul>
                             <br/>
-                            Post your feedback
+                            <div>
+                                <b>Post your feedback</b>
+                            </div>
                             <Form className="mt-2">
                                 <Form.Control type="text-area" value={userFeedback} onChange={(e) => setUserFeedback(e.target.value)}/>
                                 <Form.Control type="submit" value={"Add feedback"} className="btn btn-primary mt-2" onClick={addFeedback}/>
                             </Form>
                         </Col>
                         <Col className="col-md-4">
-                            Reservations for selected hotel
+                            <div>
+                                <b>Reservations for selected hotel</b>
+                            </div>
                             <ul className="list-group">
                                 {reservations && reservations.map((reservation) => (
                                     <button key={reservation.reservationId} id={reservation.reservationId}
@@ -329,6 +340,9 @@ export const HomePage = () => {
                     </Row>
                 </CardBody>
             </Card>
+            <div className="container w-75 mt-5">
+                <NavLink to={"/login"} onClick={logout}> Logout </NavLink>
+            </div>
         </div>
     )
 }
