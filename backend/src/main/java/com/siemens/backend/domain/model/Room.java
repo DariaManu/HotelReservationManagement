@@ -18,4 +18,10 @@ public class Room {
     private Integer roomNumber;
     private RoomType type;
     private Integer price;
+
+    public Room(final Integer roomNumber, final RoomType type, final Integer price) {
+        this.roomNumber = roomNumber;
+        this.type = type;
+        this.price = price;
+    }
 }

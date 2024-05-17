@@ -54,10 +54,6 @@ public class HotelReservationManagementService {
         User user = userRepository.findById(userId).orElseThrow(ObjectNotFoundException::new);
         Hotel hotel = hotelRepository.findById(hotelId).orElseThrow(ObjectNotFoundException::new);
         Room room = roomRepository.findById(roomId).orElseThrow(ObjectNotFoundException::new);
-        boolean roomCanBeBooked = roomCanBeBooked(room, startDate, endDate);
-        if (!roomCanBeBooked) {
-            throw new BusinessException("Cannot book this room between " + startDate + " and " + endDate);
-        }
 
         if(startDate.isAfter(endDate) || startDate.isEqual(endDate)) {
             throw new BusinessException("Start date needs to be before end date");
@@ -68,11 +64,16 @@ public class HotelReservationManagementService {
             throw new BusinessException("Start date needs to be after today");
         }
 
+        boolean roomCanBeBooked = roomCanBeBooked(room, startDate, endDate);
+        if (!roomCanBeBooked) {
+            throw new BusinessException("Cannot book this room between " + startDate + " and " + endDate);
+        }
+
         Reservation reservation = new Reservation(user, hotel, room, startDate, endDate);
         reservationRepository.save(reservation);
     }
 
-    public boolean roomCanBeBooked(final Room room, final LocalDate startDate, final LocalDate endDate) {
+    private boolean roomCanBeBooked(final Room room, final LocalDate startDate, final LocalDate endDate) {
         List<Reservation> reservations = reservationRepository.getAllByRoom(room);
         List<Reservation> overlappingReservations = new ArrayList<>();
         reservations.forEach((reservation -> {
