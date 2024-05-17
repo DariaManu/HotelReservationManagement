@@ -1,6 +1,8 @@
 package com.siemens.backend.domain.repository;
 
+import com.siemens.backend.domain.model.Hotel;
 import com.siemens.backend.domain.model.Reservation;
+import com.siemens.backend.domain.model.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +18,6 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
     List<Reservation> getOverlappingReservations(final @Param("roomId") Long roomId,
                                                            final @Param("startDate") LocalDate startDate,
                                                            final @Param("endDate") LocalDate endDate);
+
+    List<Reservation> getAllByHotelAndUser(final Hotel hotel, final User user);
 }

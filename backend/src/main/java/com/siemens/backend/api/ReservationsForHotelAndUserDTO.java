@@ -12,10 +12,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
-public class MakeReservationRequest implements Serializable {
-    private Long userId;
-    private Long hotelId;
-    private Long roomId;
+public class ReservationsForHotelAndUserDTO implements Serializable {
+    private Long reservationId;
+    private String hotelName;
+    private Integer roomNumber;
+    private String roomType;
     private LocalDate startDate;
     private LocalDate endDate;
 }

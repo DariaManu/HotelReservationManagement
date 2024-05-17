@@ -60,6 +60,13 @@ public class HotelReservationManagementService {
         reservationRepository.save(reservation);
     }
 
+    public List<Reservation> getReservationsForHotelAndUser(final Long hotelId, final Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(ObjectNotFoundException::new);
+        Hotel hotel = hotelRepository.findById(hotelId).orElseThrow(ObjectNotFoundException::new);
+        List<Reservation> reservations = reservationRepository.getAllByHotelAndUser(hotel, user);
+        return reservations;
+    }
+
     public void cancelReservation(final Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(ObjectNotFoundException::new);
         LocalDate currentDate = LocalDate.now();

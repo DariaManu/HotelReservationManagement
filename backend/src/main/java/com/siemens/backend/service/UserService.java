@@ -12,7 +12,7 @@ public class UserService {
 
     public Long login(final String email, final String password) {
         if (!userRepository.existsByEmail(email)) {
-            throw new BusinessException("Email does not exists");
+            throw new BusinessException("Email does not exist");
         }
         User user = userRepository.findByEmail(email);
         if (!user.getPassword().equals(password)) {

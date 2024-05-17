@@ -1,6 +1,7 @@
 package com.siemens.backend.api;
 
 import com.siemens.backend.domain.model.Hotel;
+import com.siemens.backend.domain.model.Reservation;
 import com.siemens.backend.service.BusinessException;
 import com.siemens.backend.service.HotelReservationManagementService;
 import com.siemens.backend.service.ObjectNotFoundException;
@@ -10,14 +11,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/hotel")
 @AllArgsConstructor
 public class HotelReservationManagementController {
     private final HotelReservationManagementService service;
 
-    @GetMapping
+    @PostMapping
     public List<Hotel> getNearbyHotels(@RequestBody GetNearbyHotelsRequest request) {
         return service.getNearbyHotels(request.getRadius(), request.getUserLat(), request.getUserLon());
     }
@@ -35,7 +38,27 @@ public class HotelReservationManagementController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(path = "/reservation/{reservationId}/cancel")
+    @GetMapping(path = "/{hotelId}/reservation/user/{userId}")
+    public ResponseEntity<?> getReservationsForHotelAndUser(@PathVariable final Long hotelId, @PathVariable final Long userId) {
+        List<Reservation> reservations;
+        try {
+            reservations = service.getReservationsForHotelAndUser(hotelId, userId);
+        } catch (ObjectNotFoundException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok()
+                .body(reservations.stream()
+                        .map((reservation ->
+                                new ReservationsForHotelAndUserDTO(reservation.getId(),
+                                        reservation.getHotel().getName(),
+                                        reservation.getRoom().getRoomNumber(),
+                                        reservation.getRoom().getType().toString(),
+                                        reservation.getStartDate(),
+                                        reservation.getEndDate())))
+                        .collect(Collectors.toList()));
+    }
+
+    @DeleteMapping(path = "/reservation/{reservationId}/cancel")
     public ResponseEntity<?> cancelReservation(@PathVariable final Long reservationId) {
         try {
             service.cancelReservation(reservationId);
