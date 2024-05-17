@@ -2,6 +2,7 @@ package com.siemens.backend.domain.repository;
 
 import com.siemens.backend.domain.model.Hotel;
 import com.siemens.backend.domain.model.Reservation;
+import com.siemens.backend.domain.model.Room;
 import com.siemens.backend.domain.model.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -20,4 +21,6 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
                                                            final @Param("endDate") LocalDate endDate);
 
     List<Reservation> getAllByHotelAndUser(final Hotel hotel, final User user);
+
+    List<Reservation> getAllByRoom(final Room room);
 }

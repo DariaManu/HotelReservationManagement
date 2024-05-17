@@ -200,7 +200,9 @@ export const HomePage = () => {
         }
         CancelReservation(selectedReservation)
             .catch((err) => {
-                console.log(err);
+                if (err && err.response.data) {
+                    alert(err.response.data);
+                }
             })
             .then((result) => {
                 if (result && result.status === 200) {
@@ -222,7 +224,9 @@ export const HomePage = () => {
         }
         ChangeReservation(selectedReservation, selectedRoom)
             .catch((err) => {
-                console.log(err);
+                if (err && err.response.data) {
+                    alert(err.response.data);
+                }
             })
             .then((result) => {
                 if (result && result.status === 200) {

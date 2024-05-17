@@ -20,6 +20,8 @@ public class HotelReservationManagementService {
     private final ReservationRepository reservationRepository;
     private final UserFeedbackRepository userFeedbackRepository;
 
+    private static final LocalTime checkInTime = LocalTime.of(12, 0, 0);
+
     public List<Hotel> getNearbyHotels(final int radius, final double latUser, final double lonUser) {
         List<Hotel> nearbyHotels = new ArrayList<>();
         hotelRepository.findAll().forEach(hotel -> {
@@ -49,15 +51,42 @@ public class HotelReservationManagementService {
 
     public void makeReservation(final Long userId, final Long hotelId, final Long roomId,
                                 final LocalDate startDate, final LocalDate endDate) {
-        List<Reservation> overlappingReservations = reservationRepository.getOverlappingReservations(roomId, startDate, endDate);
-        if (!overlappingReservations.isEmpty()) {
-            throw new BusinessException("Cannot book this room between " + startDate + " and " + endDate);
-        }
         User user = userRepository.findById(userId).orElseThrow(ObjectNotFoundException::new);
         Hotel hotel = hotelRepository.findById(hotelId).orElseThrow(ObjectNotFoundException::new);
         Room room = roomRepository.findById(roomId).orElseThrow(ObjectNotFoundException::new);
+        boolean roomCanBeBooked = roomCanBeBooked(room, startDate, endDate);
+        if (!roomCanBeBooked) {
+            throw new BusinessException("Cannot book this room between " + startDate + " and " + endDate);
+        }
+
+        if(startDate.isAfter(endDate) || startDate.isEqual(endDate)) {
+            throw new BusinessException("Start date needs to be before end date");
+        }
+
+        LocalDate today = LocalDate.now();
+        if (startDate.isBefore(today)) {
+            throw new BusinessException("Start date needs to be after today");
+        }
+
         Reservation reservation = new Reservation(user, hotel, room, startDate, endDate);
         reservationRepository.save(reservation);
+    }
+
+    public boolean roomCanBeBooked(final Room room, final LocalDate startDate, final LocalDate endDate) {
+        List<Reservation> reservations = reservationRepository.getAllByRoom(room);
+        List<Reservation> overlappingReservations = new ArrayList<>();
+        reservations.forEach((reservation -> {
+            if (startDate.isBefore(reservation.getStartDate()) && endDate.isAfter(reservation.getEndDate())) {
+                overlappingReservations.add(reservation);
+            } else if (startDate.isEqual(reservation.getStartDate())
+                    || (startDate.isAfter(reservation.getStartDate()) && startDate.isBefore(reservation.getEndDate()))) {
+                overlappingReservations.add(reservation);
+            } else if ((endDate.isAfter(reservation.getStartDate()) && endDate.isBefore(reservation.getEndDate())
+                    ) || endDate.isEqual(reservation.getEndDate())) {
+                overlappingReservations.add(reservation);
+            }
+        }));
+        return overlappingReservations.isEmpty();
     }
 
     public List<Reservation> getReservationsForHotelAndUser(final Long hotelId, final Long userId) {
@@ -69,37 +98,35 @@ public class HotelReservationManagementService {
 
     public void cancelReservation(final Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(ObjectNotFoundException::new);
-        LocalDate currentDate = LocalDate.now();
-        if (reservation.getStartDate().isBefore(currentDate)) {
-            throw new BusinessException("Cannot cancel this reservation");
-        } else if (reservation.getStartDate().equals(currentDate)) {
-            LocalTime time = LocalTime.now();
-            LocalTime checkInTime = LocalTime.of(12, 0, 0);
-            if (checkInTime.minusHours(2).isBefore(time)) {
-                throw new BusinessException("Cannot cancel this reservation");
-            }
-        }
+        checkIfModifyingReservationIsAllowed(reservation);
         reservationRepository.delete(reservation);
     }
 
     public void changeRoomInReservation(final Long reservationId, final Long roomId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(ObjectNotFoundException::new);
-        LocalDate date = LocalDate.now();
-        if (reservation.getStartDate().isBefore(date)) {
-            throw new BusinessException("Cannot cancel this reservation");
-        } else if (reservation.getStartDate().equals(date)) {
-            LocalTime time = LocalTime.now();
-            LocalTime checkInTime = LocalTime.of(12, 0, 0);
-            if (checkInTime.minusHours(2).isBefore(time)) {
-                throw new BusinessException("Cannot cancel this reservation");
-            }
-        }
         Room newRoom = roomRepository.findById(roomId).orElseThrow(ObjectNotFoundException::new);
+        checkIfModifyingReservationIsAllowed(reservation);
+        boolean roomCanBeBooked = roomCanBeBooked(newRoom, reservation.getStartDate(), reservation.getEndDate());
+        if (!roomCanBeBooked) {
+            throw new BusinessException("This room is already booked between that period");
+        }
         if (!reservation.getHotel().getRooms().contains(newRoom)) {
             throw new BusinessException("The hotel at which this reservation was made does not have the specified room");
         }
         reservation.setRoom(newRoom);
         reservationRepository.save(reservation);
+    }
+
+    private void checkIfModifyingReservationIsAllowed(final Reservation reservation) {
+        LocalDate currentDate = LocalDate.now();
+        if (reservation.getStartDate().isBefore(currentDate)) {
+            throw new BusinessException("Cannot modify this reservation");
+        } else if (reservation.getStartDate().equals(currentDate)) {
+            LocalTime time = LocalTime.now();
+            if (checkInTime.minusHours(2).isBefore(time)) {
+                throw new BusinessException("Cannot modify this reservation");
+            }
+        }
     }
 
     public void postUserFeedback(final Long hotelId, final String feedback) {
