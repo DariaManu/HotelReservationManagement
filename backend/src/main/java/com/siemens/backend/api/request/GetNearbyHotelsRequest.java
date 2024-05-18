@@ -1,4 +1,4 @@
-package com.siemens.backend.api;
+package com.siemens.backend.api.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +7,9 @@ import lombok.ToString;
 
 import java.io.Serializable;
 
+/**
+ * Request for retrieving hotels which are in a specific radius relative to the position of the user.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

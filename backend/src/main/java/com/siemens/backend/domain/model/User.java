@@ -1,12 +1,20 @@
 package com.siemens.backend.domain.model;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Column;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Class representing a user entity.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

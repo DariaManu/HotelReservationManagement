@@ -1,4 +1,4 @@
-package com.siemens.backend.api;
+package com.siemens.backend.api.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * Request for logging in a user.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

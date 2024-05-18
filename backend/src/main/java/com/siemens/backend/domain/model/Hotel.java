@@ -1,6 +1,11 @@
 package com.siemens.backend.domain.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.FetchType;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +14,9 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing a hotel entity.
+ */
 @NoArgsConstructor
 @Getter
 @Setter

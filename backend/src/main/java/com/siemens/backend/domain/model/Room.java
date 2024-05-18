@@ -1,8 +1,20 @@
 package com.siemens.backend.domain.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Column;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+/**
+ * Class representing a room of a hotel.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -19,9 +31,4 @@ public class Room {
     private RoomType type;
     private Integer price;
 
-    public Room(final Integer roomNumber, final RoomType type, final Integer price) {
-        this.roomNumber = roomNumber;
-        this.type = type;
-        this.price = price;
-    }
 }

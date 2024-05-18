@@ -1,6 +1,7 @@
 package com.siemens.backend.service;
 
 import com.siemens.backend.domain.model.Hotel;
+import com.siemens.backend.service.exception.BusinessException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,11 +1,20 @@
 package com.siemens.backend.domain.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Column;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Class representing the feedback given by a user to a specific hotel.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
