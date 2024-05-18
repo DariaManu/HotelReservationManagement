@@ -32,13 +32,11 @@ export const HomePage = () => {
     const [userFeedback, setUserFeedback] = useState("");
 
     function successFunction(position) {
-        console.log(position.coords.latitude);
-        console.log(position.coords.longitude);
         setUserPosition({userLat: position.coords.latitude, userLon: position.coords.longitude});
     }
 
     function errorFunction(position) {
-        console.log('error');
+        alert('error');
     }
 
     useEffect(() => {
@@ -56,13 +54,14 @@ export const HomePage = () => {
         }
         const data = {radius: radius, userLat: userPosition.userLat, userLon: userPosition.userLon}
         GetNearbyHotelsApi(data)
-            .catch((error) => {
-                console.log(error);
+            .catch((err) => {
+                if (err && err.response.data) {
+                    alert(err.response.data);
+                }
             })
-            .then((response) => {
-                if (response && response.status === 200) {
-                    setHotels(response.data);
-                    console.log(response.data);
+            .then((result) => {
+                if (result && result.status === 200) {
+                    setHotels(result.data);
                     resetData();
                 }
             });
@@ -105,11 +104,13 @@ export const HomePage = () => {
         }
         GetReservationsForHotelAndUser(hotelId, auth.id)
             .catch((err) => {
-                console.log(err);
+                if (err && err.response.data) {
+                    alert(err.response.data);
+                }
             })
-            .then((response) => {
-                if (response && response.status === 200) {
-                    setReservations(response.data);
+            .then((result) => {
+                if (result && result.status === 200) {
+                    setReservations(result.data);
                 }
             })
     }
@@ -121,7 +122,9 @@ export const HomePage = () => {
         }
         GetFeedbackForHotel(hotelId)
             .catch((err) => {
-                console.log(err);
+                if (err && err.response.data) {
+                    alert(err.response.data);
+                }
             })
             .then((result) => {
                 if (result && result.status === 200) {
@@ -144,10 +147,12 @@ export const HomePage = () => {
         }
         PostFeedbackForHotel(selectedHotel, {feedback: userFeedback})
             .catch((err) => {
-                console.log(err);
+                if (err && err.response.data) {
+                    alert(err.response.data);
+                }
             })
-            .then((response) => {
-                if (response && response.status === 200) {
+            .then((result) => {
+                if (result && result.status === 200) {
                     setFeedback([...feedback, userFeedback]);
                     setUserFeedback("");
                 }
@@ -179,16 +184,13 @@ export const HomePage = () => {
             startDate: reservationStartDate,
             endDate: reservationEndDate
         }
-        console.log(data);
         MakeReservation(data)
             .catch((err) => {
                 if (err && err.response.data) {
-                    console.log(err.response.data);
                     alert(err.response.data);
                 }
             })
-            .then((response) => {
-                console.log(response);
+            .then((result) => {
                 getReservationsForHotelAndUser(selectedHotel);
             })
     }
@@ -207,7 +209,6 @@ export const HomePage = () => {
             })
             .then((result) => {
                 if (result && result.status === 200) {
-                    console.log(result);
                     getReservationsForHotelAndUser(selectedHotel);
                 }
             });
@@ -231,7 +232,6 @@ export const HomePage = () => {
             })
             .then((result) => {
                 if (result && result.status === 200) {
-                    console.log(result);
                     getReservationsForHotelAndUser(selectedHotel);
                 }
             })

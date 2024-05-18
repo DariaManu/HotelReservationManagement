@@ -1,5 +1,4 @@
 import axios from "axios";
-import {useEffect, useState} from "react";
 
 export const LoginApi = (data) => {
     return axios.post("http://localhost:8080/backend/api/login", data);
